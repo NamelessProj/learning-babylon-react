@@ -1,60 +1,57 @@
-/* eslint-disable react/prop-types */
 import {
-    Engine,
-    Scene,
-  } from '@babylonjs/core'
-
-import { useRef, useEffect } from 'react'
-
-  export const SceneComponent = (props) => {
-    const reactCanvas = useRef(null)
-    const {
-      canvasId,
+  Engine,
+  Scene,
+} from '@babylonjs/core'
+import React, { useEffect, useRef } from 'react'
+export const SceneComponent = (props) => {
+  const reactCanvas = useRef(null)
+  const {
+    canvasId,
+    antialias,
+    engineOptions,
+    adaptToDeviceRatio,
+    sceneOptions,
+    onRender,
+    onSceneReady,
+    ...rest
+  } = props
+  useEffect(() => {
+    if (!reactCanvas.current) return
+    const engine = new Engine(
+      reactCanvas.current,
       antialias,
       engineOptions,
-      adaptToDeviceRatio,
-      sceneOptions,
-      onRender,
-      onSceneReady,
-      ...rest
-    } = props
-    useEffect(() => {
-      if (!reactCanvas.current) return
-      const engine = new Engine(
-        reactCanvas.current,
-        antialias,
-        engineOptions,
-        adaptToDeviceRatio
-      )
-      const scene = new Scene(engine, sceneOptions)
-      if (scene.isReady()) {
-        onSceneReady(scene)
-      } else {
-        scene.onReadyObservable.addOnce(onSceneReady)
-      }
-      engine.runRenderLoop(() => {
-        onRender(scene)
-        scene.render()
-      })
-      const resize = () => {
-        scene.getEngine().resize()
-      }
+      adaptToDeviceRatio
+    )
+    const scene = new Scene(engine, sceneOptions)
+    if (scene.isReady()) {
+      onSceneReady(scene)
+    } else {
+      scene.onReadyObservable.addOnce(onSceneReady)
+    }
+    engine.runRenderLoop(() => {
+      onRender(scene)
+      scene.render()
+    })
+    const resize = () => {
+      scene.getEngine().resize()
+    }
+    if (window) {
+      window.addEventListener('resize', resize)
+    }
+    return () => {
+      scene.getEngine().dispose()
       if (window) {
-        window.addEventListener('resize', resize)
+        window.removeEventListener('resize', resize)
       }
-      return () => {
-        scene.getEngine().dispose()
-        if (window) {
-          window.removeEventListener('resize', resize)
-        }
-      }
-    }, [
-      antialias,
-      engineOptions,
-      adaptToDeviceRatio,
-      sceneOptions,
-      onRender,
-      onSceneReady,
-    ])
-    return <canvas id={canvasId} ref={reactCanvas} {...rest} />
-  }
+    }
+  }, [
+    antialias,
+    engineOptions,
+    adaptToDeviceRatio,
+    sceneOptions,
+    onRender,
+    onSceneReady,
+  ])
+  return <canvas id={canvasId} ref={reactCanvas} {...rest} />
+}

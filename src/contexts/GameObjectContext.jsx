@@ -1,12 +1,15 @@
-// GameObject.js
+// GameObjectContext.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const GameObjectContext = React.createContext();
+// Crea il contesto GameObjectContext
+const GameObjectContext = React.createContext({
+  scene: null,
+  engine: null,
+});
 
-const GameObject = ({ children }) => {
-  const { scene } = React.useContext(GameObjectContext);
-
+// Crea il componente GameObject
+const GameObject = ({ children, scene, engine }) => {
   const beforeLoop = React.useCallback(() => {
     // Logica comune prima del rendering
   }, []);
@@ -25,18 +28,13 @@ const GameObject = ({ children }) => {
     };
   }, [scene, beforeLoop, afterLoop]);
 
-  return (
-    <GameObjectContext.Consumer>
-      {(context) => {
-        const { gameController, scene, engine, level } = context;
-        return children({ gameController, scene, engine, level });
-      }}
-    </GameObjectContext.Consumer>
-  );
+  return <GameObjectContext.Provider value={{ scene, engine }}>{children}</GameObjectContext.Provider>;
 };
 
 GameObject.propTypes = {
-    children: PropTypes.func.isRequired,
-  };
+  children: PropTypes.node.isRequired,
+  scene: PropTypes.object.isRequired,
+  engine: PropTypes.object.isRequired,
+};
 
-export { GameObject, GameObjectContext };
+export { GameObjectContext, GameObject };

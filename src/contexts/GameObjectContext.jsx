@@ -6,19 +6,28 @@ import PropTypes from 'prop-types';
 const GameObjectContext = React.createContext({
   scene: null,
   engine: null,
+  beforeLoop: null,
+  afterLoop: null,
 });
 
 // Crea il componente GameObject
 const GameObject = ({ children, scene, engine }) => {
-  const beforeLoop = React.useCallback(() => {
-    // Logica comune prima del rendering
-  }, []);
-
-  const afterLoop = React.useCallback(() => {
-    // Logica comune dopo il rendering
-  }, []);
+  const beforeLoopRef = React.useRef(null);
+  const afterLoopRef = React.useRef(null);
 
   React.useEffect(() => {
+    const beforeLoop = () => {
+      if (beforeLoopRef.current) {
+        beforeLoopRef.current();
+      }
+    };
+
+    const afterLoop = () => {
+      if (afterLoopRef.current) {
+        afterLoopRef.current();
+      }
+    };
+
     scene.registerBeforeRender(beforeLoop);
     scene.registerAfterRender(afterLoop);
 
@@ -26,9 +35,13 @@ const GameObject = ({ children, scene, engine }) => {
       scene.unregisterBeforeRender(beforeLoop);
       scene.unregisterAfterRender(afterLoop);
     };
-  }, [scene, beforeLoop, afterLoop]);
+  }, [scene]);
 
-  return <GameObjectContext.Provider value={{ scene, engine }}>{children}</GameObjectContext.Provider>;
+  return (
+    <GameObjectContext.Provider value={{ scene, engine, beforeLoop: beforeLoopRef, afterLoop: afterLoopRef }}>
+      {children}
+    </GameObjectContext.Provider>
+  );
 };
 
 GameObject.propTypes = {

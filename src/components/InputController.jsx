@@ -10,7 +10,6 @@ const InputController = (props) => {
     const [jumpKeyDown, setJumpKeyDown] = useState(false);
 
     useEffect(() => {
-        console.log('InputController is ready');
         const onKeyDown = (event) => {
             setInputMap((prevInputMap) => ({
                 ...prevInputMap,
@@ -33,14 +32,12 @@ const InputController = (props) => {
 
     useEffect(() => {
         const updateFromKeyboard = () => {
-            console.log('updateFromKeyboard called');
-            console.log('inputMap:', inputMap);
             if (inputMap['a']) {
                 setHorizontal((prevHorizontal) => Scalar.Lerp(prevHorizontal, -0.1, 0.5));
             } else if (inputMap['d']) {
                 setHorizontal((prevHorizontal) => Scalar.Lerp(prevHorizontal, 0.1, 0.5));
             } else {
-                setHorizontal((prevHorizontal) => Scalar.Lerp(prevHorizontal, 0, 0.5));
+                setHorizontal(0);
             }
             if (inputMap['w']) {
                 console.log('w');
@@ -48,7 +45,7 @@ const InputController = (props) => {
             } else if (inputMap['s']) {
                 setVertical((prevVertical) => Scalar.Lerp(prevVertical, -0.1, 0.5));
             } else {
-                setVertical((prevVertical) => Scalar.Lerp(prevVertical, 0, 0.5));
+                setVertical(0);
             }
             setJumpKeyDown(inputMap[' ']);
 

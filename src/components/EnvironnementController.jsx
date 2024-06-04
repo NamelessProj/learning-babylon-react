@@ -16,7 +16,7 @@ const EnvironmentController = () => {
   const createGround = (scene) => {
     const ground = MeshBuilder.CreateGround(
       'ground',
-      { width: 10, height: 10 },
+      { width: 50, height: 50 },
       scene
     );
     ground.checkCollisions = true;

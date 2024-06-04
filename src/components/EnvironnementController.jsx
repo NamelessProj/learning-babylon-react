@@ -19,6 +19,7 @@ const EnvironmentController = () => {
       { width: 10, height: 10 },
       scene
     );
+    ground.checkCollisions = true;
   };
 
   const createSunlight = (scene) => {

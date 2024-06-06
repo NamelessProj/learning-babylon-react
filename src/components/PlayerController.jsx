@@ -23,12 +23,13 @@ const PlayerController = ({ input = {} }) => {
     body.isPickable = false;
     body.ellipsoid = new Vector3(1, 1, 1);
     body.ellipsoidOffset = new Vector3(0, 0, 0);
-    // Aggiungi un nodo come figlio della sfera
+
+    // Add a child node to the player
     const node = new TransformNode("playerNode", scene);
     node.parent = body;
-    node.position = new Vector3(0, 0, 1); // Posiziona il nodo in basso rispetto alla sfera
+    node.position = new Vector3(0, 0, 1);
 
-    // Crea un quadratino e assegnalo come figlio del nodo
+    // Create a square mesh add it as a child of the player
     const square = MeshBuilder.CreateBox("square", { size: 0.5 }, scene);
     square.parent = node;
 
@@ -41,28 +42,31 @@ const PlayerController = ({ input = {} }) => {
       if (playerRef.current) {
           const { horizontal, vertical, jumpKeyDown } = input;
 
-          // Ottieni il delta time
+          // Get the time delta
           const deltaTime = engine.getDeltaTime() / 1000;
 
-          // Inizializza il vettore di direzione del movimento a zero
+          // Initialize the movement direction to zero
           const moveDirection = Vector3.Zero();
 
-          // Ruota il player a destra
+
           if (horizontal > 0) {
               playerRef.current.rotation.y += 0.1;
           }
 
-          // Ruota il player a sinistra
+
           if (horizontal < 0) {
               playerRef.current.rotation.y -= 0.1;
           }
 
-          // Calcola il vettore frontale del player
+          // Calculate the front vector of the player
           const frontVector = new Vector3(
               Math.sin(playerRef.current.rotation.y),
               0,
               Math.cos(playerRef.current.rotation.y)
           );
+
+          // Calculate the back vector of the player
+          const backVector = frontVector.negate();
 
           // Muovi il player in avanti
           if (vertical > 0) {
@@ -73,13 +77,25 @@ const PlayerController = ({ input = {} }) => {
               );
           }
 
+          if (vertical < 0) {
+              moveDirection.copyFrom(backVector).multiplyByFloats(
+                  PLAYER_SPEED,
+                  PLAYER_SPEED,
+                  PLAYER_SPEED
+              );
+          }
 
-          // Applica il movimento al player
+
+          // Apply the movement direction to the player
           playerRef.current.moveWithCollisions(moveDirection);
 
-          // Applica la forza di salto se il tasto di salto è premuto
-          if (jumpKeyDown && playerRef.current.position.y === 0) {
+          console.log(playerRef.current.position);
+
+          // Apply gravity and jump
+          if (jumpKeyDown) {
               velocityRef.current.y = PLAYER_JUMP_FORCE;
+          }else{
+            velocityRef.current.y += GRAVITY * deltaTime;
           }
 
           const newVelocityY = velocityRef.current.y + GRAVITY * deltaTime;

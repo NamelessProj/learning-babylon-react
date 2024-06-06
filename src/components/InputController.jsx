@@ -11,6 +11,7 @@ const InputController = (props) => {
     const [horizontal, setHorizontal] = useState(0);
     const [vertical, setVertical] = useState(0);
     const [jumpKeyDown, setJumpKeyDown] = useState(false);
+    const [jumpKeyPressed, setJumpKeyPressed] = useState(false);
 
     useEffect(() => {
         const onKeyDown = (event) => {

@@ -71,20 +71,13 @@ const PlayerController = ({ input = {} }) => {
 
           // Muovi il player in avanti
           if (vertical > 0) {
-              moveDirection.copyFrom(frontVector).multiplyByFloats(
-                  PLAYER_SPEED,
-                  PLAYER_SPEED,
-                  PLAYER_SPEED
-              );
+            const scaledDirection = frontVector.scale(vertical * PLAYER_SPEED);
+            moveDirection.addInPlace(scaledDirection);
           }
 
-          // Move the player backwards
           if (vertical < 0) {
-              moveDirection.copyFrom(backVector).multiplyByFloats(
-                  PLAYER_SPEED,
-                  PLAYER_SPEED,
-                  PLAYER_SPEED
-              );
+            const scaledDirection = backVector.scale(-vertical * PLAYER_SPEED);
+            moveDirection.addInPlace(scaledDirection);
           }
 
 

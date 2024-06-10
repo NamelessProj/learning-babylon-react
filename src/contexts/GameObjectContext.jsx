@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 // Crea il contesto GameObjectContext
 const GameObjectContext = React.createContext({
-
   scene: null,
   engine: null,
   beforeLoop: null,

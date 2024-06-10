@@ -6,17 +6,54 @@ import { GameObjectContext } from '../contexts/GameObjectContext';
 const EnvironmentController = () => {
   const { scene } = React.useContext(GameObjectContext);
 
+  const maze = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0],
+    [1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1],
+    [1,1,0,0,0,1,1,0,1,0,1,1,0,1,1,0,1,0,1,1],
+    [1,1,1,1,0,1,0,0,1,0,1,1,0,0,1,0,1,0,1,1],
+    [1,0,0,0,0,0,0,1,1,0,0,1,1,0,1,0,1,0,1,1],
+    [1,0,1,1,1,1,1,1,0,0,1,1,1,0,1,0,1,0,0,1],
+    [1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,0,1,1,0,1],
+    [1,0,0,0,0,1,1,0,1,1,0,1,1,1,1,0,1,1,1,1],
+    [1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1],
+    [1,0,1,0,0,0,1,1,1,0,0,1,1,1,0,1,1,1,0,0],
+    [1,0,1,0,1,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1],
+    [1,0,1,0,1,1,1,0,1,1,0,1,0,1,0,1,0,1,0,1],
+    [1,0,1,0,1,1,1,0,1,1,0,1,0,1,0,0,0,1,0,1],
+    [1,0,0,0,1,0,1,0,1,1,0,1,0,1,1,1,1,1,0,1],
+    [1,1,1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,1],
+    [1,1,1,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1],
+    [1,1,1,0,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1],
+    [1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,1,1],
+    [1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1]
+  ];
+
   useEffect(() => {
     if (scene) {
       createGround(scene);
-    createSunlight(scene);
+      createMaze(scene)
+      createSunlight(scene);
     }
   }, [scene]);
+
+  function createMaze(scene) {
+    maze.forEach((rows, z) => rows.forEach((isWall, x) => {
+      if (!isWall) return;
+      const wall = MeshBuilder.CreateBox("wall", {
+        size: 4,
+      }, scene);
+      wall.position.x = (x * 4) - 38;
+      wall.position.z = (z * 4) - 38;
+      wall.position.y = 2;
+      wall.checkCollisions = true;
+    }))
+  }
 
   const createGround = (scene) => {
     const ground = MeshBuilder.CreateGround(
       'ground',
-      { width: 50, height: 50 },
+      { width: 80, height: 80 },
       scene
     );
     ground.checkCollisions = true;

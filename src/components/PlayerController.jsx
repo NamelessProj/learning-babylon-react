@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useContext } from 'react';
 import { MeshBuilder, TransformNode, Vector3, Scalar } from '@babylonjs/core';
 import { GameObjectContext } from '../contexts/GameObjectContext';
-import { GRAVITY, PLAYER_SPEED, PLAYER_JUMP_FORCE } from '../settings/const';
+import { GRAVITY, PLAYER_SPEED, PLAYER_JUMP_FORCE, ROTATION_SPEED } from '../settings/const';
 
 const PlayerController = ({ input = {} }) => {
   const { scene, engine, beforeLoop } = useContext(GameObjectContext);
@@ -47,12 +47,12 @@ const PlayerController = ({ input = {} }) => {
 
           // Ruota il player a destra
           if (horizontal > 0) {
-              playerRef.current.rotation.y += 0.1;
+              playerRef.current.rotation.y += ROTATION_SPEED;
           }
 
           // Ruota il player a sinistra
           if (horizontal < 0) {
-              playerRef.current.rotation.y -= 0.1;
+              playerRef.current.rotation.y -= ROTATION_SPEED;
           }
 
 

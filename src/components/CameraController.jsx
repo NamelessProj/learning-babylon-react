@@ -33,7 +33,7 @@ const CameraController = () => {
         scene
     )
     camera.radius = 30
-    camera.heightOffset = 10
+    camera.heightOffset = 25
     camera.rotationOffset = 180
     camera.lockedTarget = scene.getMeshByName('player')
     console.log(camera.lockedTarget)

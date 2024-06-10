@@ -32,17 +32,17 @@ const InputController = (props) => {
 
     useEffect(() => {
         const updateFromKeyboard = () => {
-            if (inputMap['a'] || inputMap['q']) {
+            if (inputMap['a'] || inputMap['q'] || inputMap['arrowleft']) {
                 setHorizontal((prevHorizontal) => Scalar.Lerp(prevHorizontal, -0.1, 0.5));
-            } else if (inputMap['d']) {
+            } else if (inputMap['d'] || inputMap['arrowright']) {
                 setHorizontal((prevHorizontal) => Scalar.Lerp(prevHorizontal, 0.1, 0.5));
             } else {
                 setHorizontal(0);
             }
-            if (inputMap['w'] || inputMap['z']) {
+            if (inputMap['w'] || inputMap['z'] || inputMap['arrowup']) {
                 console.log('w');
                 setVertical((prevVertical) => Scalar.Lerp(prevVertical, 0.1, 0.5));
-            } else if (inputMap['s']) {
+            } else if (inputMap['s'] || inputMap['arrowdown']) {
                 setVertical((prevVertical) => Scalar.Lerp(prevVertical, -0.1, 0.5));
             } else {
                 setVertical(0);

@@ -3,12 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Crea il contesto GameObjectContext
-const GameObjectContext = React.createContext({
-  scene: null,
-  engine: null,
-  beforeLoop: null,
-  afterLoop: null,
-});
+
 
 // Crea il componente GameObject
 const GameObject = ({ children, scene, engine }) => {

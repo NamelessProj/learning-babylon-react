@@ -23,7 +23,6 @@ const PlayerController = ({ input = {} }) => {
     body.isPickable = false;
     body.ellipsoid = new Vector3(1, 1, 1);
     body.ellipsoidOffset = new Vector3(0, 0, 0);
-    // Aggiungi un nodo come figlio della sfera
     const node = new TransformNode("playerNode", scene);
     node.parent = body;
     node.position = new Vector3(0, 0, 1); // Posiziona il nodo in basso rispetto alla sfera
@@ -55,6 +54,7 @@ const PlayerController = ({ input = {} }) => {
           if (horizontal < 0) {
               playerRef.current.rotation.y -= 0.1;
           }
+
 
           // Calcola il vettore frontale del player
           const frontVector = new Vector3(
@@ -91,11 +91,10 @@ const PlayerController = ({ input = {} }) => {
           // Applica il movimento al player
           playerRef.current.moveWithCollisions(moveDirection);
 
-          // Applica la forza di salto se il tasto di salto è premuto
-          if (jumpKeyDown && playerRef.current.position.y === 0) {
-              velocityRef.current.y = PLAYER_JUMP_FORCE;
+          // Applica la forza di salto se il tasto di salto è premuto (ground at Y ~ 1.05 so buffer at 1.2 = on ground)
+          if (jumpKeyDown && playerRef.current.position.y < 1.2) {
+            velocityRef.current.y = PLAYER_JUMP_FORCE;
           }
-
           const newVelocityY = velocityRef.current.y + GRAVITY * deltaTime;
           velocityRef.current.y = Scalar.Lerp(velocityRef.current.y, newVelocityY, 0.1);
           playerRef.current.moveWithCollisions(velocityRef.current);

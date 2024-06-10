@@ -33,7 +33,6 @@ const PlayerController = ({ input = {} }) => {
     square.parent = node;
 
     playerRef.current = body;
-    playerRef.current = body;
   };
 
   useEffect(() => {
@@ -63,10 +62,25 @@ const PlayerController = ({ input = {} }) => {
               0,
               Math.cos(playerRef.current.rotation.y)
           );
+          // Calcola il vettore back del player
+          const backVector = new Vector3(
+              -Math.sin(playerRef.current.rotation.y),
+              0,
+              -Math.cos(playerRef.current.rotation.y)
+          );
 
           // Muovi il player in avanti
           if (vertical > 0) {
               moveDirection.copyFrom(frontVector).multiplyByFloats(
+                  PLAYER_SPEED,
+                  PLAYER_SPEED,
+                  PLAYER_SPEED
+              );
+          }
+
+          // Move the player backwards
+          if (vertical < 0) {
+              moveDirection.copyFrom(backVector).multiplyByFloats(
                   PLAYER_SPEED,
                   PLAYER_SPEED,
                   PLAYER_SPEED

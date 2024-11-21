@@ -2,16 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Scalar } from '@babylonjs/core';
 import { GameObjectContext } from '../contexts/GameObjectContext';
 
-// TO SOLVE THE EXERCISE, YOU NEED TO MODIFY THIS COMPONENT
-// TO HANDLE THE JUMP KEY TO AVOID PLAYER FLIGHT
-
 const InputController = (props) => {
     const { scene } = React.useContext(GameObjectContext);
     const [inputMap, setInputMap] = useState({});
     const [horizontal, setHorizontal] = useState(0);
     const [vertical, setVertical] = useState(0);
     const [jumpKeyDown, setJumpKeyDown] = useState(false);
-    const [jumpKeyPressed, setJumpKeyPressed] = useState(false);
 
     useEffect(() => {
         const onKeyDown = (event) => {
@@ -19,10 +15,6 @@ const InputController = (props) => {
                 ...prevInputMap,
                 [event.key.toLowerCase()]: true,
             }));
-
-            if (event.key === ' ' && !jumpKeyPressed) {
-                setJumpKeyDown(true);
-            }
         };
         const onKeyUp = (event) => {
             setInputMap((prevInputMap) => ({
@@ -30,34 +22,32 @@ const InputController = (props) => {
                 [event.key.toLowerCase()]: false,
             }));
         };
-
         document.addEventListener('keydown', onKeyDown);
         document.addEventListener('keyup', onKeyUp);
         return () => {
             document.removeEventListener('keydown', onKeyDown);
             document.removeEventListener('keyup', onKeyUp);
         };
-    }, [jumpKeyPressed]);
+    }, []);
 
     useEffect(() => {
         const updateFromKeyboard = () => {
-            if (inputMap['a']) {
+            if (inputMap['a'] || inputMap['q'] || inputMap['arrowleft']) {
                 setHorizontal((prevHorizontal) => Scalar.Lerp(prevHorizontal, -0.1, 0.5));
-            } else if (inputMap['d']) {
+            } else if (inputMap['d'] || inputMap['arrowright']) {
                 setHorizontal((prevHorizontal) => Scalar.Lerp(prevHorizontal, 0.1, 0.5));
             } else {
                 setHorizontal(0);
             }
-            if (inputMap['w']) {
-                  console.log('w');
+            if (inputMap['w'] || inputMap['z'] || inputMap['arrowup']) {
+                console.log('w');
                 setVertical((prevVertical) => Scalar.Lerp(prevVertical, 0.1, 0.5));
-            } else if (inputMap['s']) {
+            } else if (inputMap['s'] || inputMap['arrowdown']) {
                 setVertical((prevVertical) => Scalar.Lerp(prevVertical, -0.1, 0.5));
             } else {
                 setVertical(0);
             }
-
-            setJumpKeyDown(false);
+            setJumpKeyDown(inputMap[' ']);
 
             // Call the onUpdate prop instead of dispatching a custom event
             props.onUpdate({

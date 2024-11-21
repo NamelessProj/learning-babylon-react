@@ -1,65 +1,43 @@
 // CameraController.jsx
-import { useContext, useEffect, useState } from 'react';
-import { ArcRotateCamera, Vector3, FollowCamera } from '@babylonjs/core';
+import {useContext, useEffect, useState} from 'react';
+import {ArcRotateCamera, FollowCamera, Vector3} from '@babylonjs/core';
 import { GameObjectContext } from '../contexts/GameObjectContext';
+import playerController from "./PlayerController.jsx";
 
 const CameraController = () => {
-  const { scene, engine, beforeLoop } = useContext(GameObjectContext);
-  const [playerReady, setPlayerReady] = useState(false);
+  const { scene } = useContext(GameObjectContext);
+  //Check if player exist to create camera
+
+  const [playerReady, setPlayerReady] = useState(false)
 
   useEffect(() => {
-    if (scene) {
-      const arcCamera = new ArcRotateCamera('arcCamera', -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0), scene);
-      arcCamera.attachControl(scene.getEngine().getRenderingCanvas(), true);
-    }
-  }, [scene]);
+    let interval
 
-  useEffect(() => {
-    let interval;
-
-    if (scene) {
+    if (scene){
       interval = setInterval(() => {
-        const player = scene.getMeshByName("player");
-        if (player) {
-          setPlayerReady(true);
-          clearInterval(interval);
+        const player = scene.getMeshByName('player')
+        if (player){
+          setPlayerReady(true)
+          clearInterval(interval)
         }
-      }, 100);
+      }, 100)
     }
 
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [scene]);
+  }, [scene])
 
   useEffect(() => {
-    if (scene && playerReady) {
-      const arcCamera = scene.getCameraByName('arcCamera');
-      if (arcCamera) {
-        arcCamera.dispose();
-      }
-
-      const player = scene.getMeshByName("player");
-      if (player) {
-        const followCamera = new FollowCamera("FollowCamera", new Vector3(10, 0, 10), scene);
-        followCamera.radius = 20;
-        followCamera.heightOffset = 2;
-        followCamera.rotationOffset = 180;
-        followCamera.cameraAcceleration = 0.2;
-        followCamera.maxCameraSpeed = 10;
-        followCamera.lockedTarget = player;
-
-        scene.activeCamera = followCamera;
-        followCamera.attachControl();
-
-        followCamera.dampingFactorX = 0.1;
-      followCamera.dampingFactorY = 0.1;
-      followCamera.dampingFactorZ = 0.1;
-      }
-    }
-  }, [scene, playerReady]);
+    scene.getCameraByName('camera').dispose()
+    const camera = new FollowCamera(
+        'camera',
+        new Vector3(0, 5, -15),
+        scene
+    )
+    camera.radius = 30
+    camera.heightOffset = 25
+    camera.rotationOffset = 180
+    camera.lockedTarget = scene.getMeshByName('player')
+    console.log(camera.lockedTarget)
+  }, [scene, playerReady])
 
   return null;
 };

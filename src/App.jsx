@@ -69,7 +69,11 @@ const App = () => {
       onSceneReady={onSceneReady}
       onRender={onRender}
       id="my-canvas"
+      id="my-canvas"
     >
+      {sceneState && engineState && (
+        <Shell scene={sceneState} engine={engineState} />
+      )}
       {sceneState && engineState && (
         <Shell scene={sceneState} engine={engineState} />
       )}

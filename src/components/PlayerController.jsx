@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useContext } from 'react';
 import { MeshBuilder, TransformNode, Vector3, Scalar } from '@babylonjs/core';
 import { GameObjectContext } from '../contexts/GameObjectContext';
-import { GRAVITY, PLAYER_SPEED, PLAYER_JUMP_FORCE } from '../settings/const';
+import { GRAVITY, PLAYER_SPEED, PLAYER_JUMP_FORCE, ROTATION_SPEED } from '../settings/const';
 
 const PlayerController = ({ input = {} }) => {
   const { scene, engine, beforeLoop } = useContext(GameObjectContext);
@@ -23,17 +23,14 @@ const PlayerController = ({ input = {} }) => {
     body.isPickable = false;
     body.ellipsoid = new Vector3(1, 1, 1);
     body.ellipsoidOffset = new Vector3(0, 0, 0);
-
-    // Add a child node to the player
     const node = new TransformNode("playerNode", scene);
     node.parent = body;
-    node.position = new Vector3(0, 0, 1);
+    node.position = new Vector3(0, 0, 1); // Posiziona il nodo in basso rispetto alla sfera
 
-    // Create a square mesh add it as a child of the player
+    // Crea un quadratino e assegnalo come figlio del nodo
     const square = MeshBuilder.CreateBox("square", { size: 0.5 }, scene);
     square.parent = node;
 
-    playerRef.current = body;
     playerRef.current = body;
   };
 
@@ -42,62 +39,55 @@ const PlayerController = ({ input = {} }) => {
       if (playerRef.current) {
           const { horizontal, vertical, jumpKeyDown } = input;
 
-          // Get the time delta
+          // Ottieni il delta time
           const deltaTime = engine.getDeltaTime() / 1000;
 
-          // Initialize the movement direction to zero
+          // Inizializza il vettore di direzione del movimento a zero
           const moveDirection = Vector3.Zero();
 
-
+          // Ruota il player a destra
           if (horizontal > 0) {
-              playerRef.current.rotation.y += 0.1;
+              playerRef.current.rotation.y += ROTATION_SPEED;
           }
 
-
+          // Ruota il player a sinistra
           if (horizontal < 0) {
-              playerRef.current.rotation.y -= 0.1;
+              playerRef.current.rotation.y -= ROTATION_SPEED;
           }
 
-          // Calculate the front vector of the player
+
+          // Calcola il vettore frontale del player
           const frontVector = new Vector3(
               Math.sin(playerRef.current.rotation.y),
               0,
               Math.cos(playerRef.current.rotation.y)
           );
-
-          // Calculate the back vector of the player
-          const backVector = frontVector.negate();
+          // Calcola il vettore back del player
+          const backVector = new Vector3(
+              -Math.sin(playerRef.current.rotation.y),
+              0,
+              -Math.cos(playerRef.current.rotation.y)
+          );
 
           // Muovi il player in avanti
           if (vertical > 0) {
-              moveDirection.copyFrom(frontVector).multiplyByFloats(
-                  PLAYER_SPEED,
-                  PLAYER_SPEED,
-                  PLAYER_SPEED
-              );
+            const scaledDirection = frontVector.scale(vertical * PLAYER_SPEED);
+            moveDirection.addInPlace(scaledDirection);
           }
 
           if (vertical < 0) {
-              moveDirection.copyFrom(backVector).multiplyByFloats(
-                  PLAYER_SPEED,
-                  PLAYER_SPEED,
-                  PLAYER_SPEED
-              );
+            const scaledDirection = backVector.scale(-vertical * PLAYER_SPEED);
+            moveDirection.addInPlace(scaledDirection);
           }
 
 
-          // Apply the movement direction to the player
+          // Applica il movimento al player
           playerRef.current.moveWithCollisions(moveDirection);
 
-          console.log(playerRef.current.position);
-
-          // Apply gravity and jump
-          if (jumpKeyDown) {
-              velocityRef.current.y = PLAYER_JUMP_FORCE;
-          }else{
-            velocityRef.current.y += GRAVITY * deltaTime;
+          // Applica la forza di salto se il tasto di salto è premuto (ground at Y ~ 1.05 so buffer at 1.2 = on ground)
+          if (jumpKeyDown && playerRef.current.position.y < 1.2) {
+            velocityRef.current.y = PLAYER_JUMP_FORCE;
           }
-
           const newVelocityY = velocityRef.current.y + GRAVITY * deltaTime;
           velocityRef.current.y = Scalar.Lerp(velocityRef.current.y, newVelocityY, 0.1);
           playerRef.current.moveWithCollisions(velocityRef.current);

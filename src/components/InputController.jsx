@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Scalar } from '@babylonjs/core';
 import { GameObjectContext } from '../contexts/GameObjectContext';
 
-const InputController = (props) => {
+export const InputController = (props) => {
     const { scene } = React.useContext(GameObjectContext);
     const [inputMap, setInputMap] = useState({});
     const [horizontal, setHorizontal] = useState(0);
@@ -65,5 +65,3 @@ const InputController = (props) => {
 
     return null;
 };
-
-export default InputController;

@@ -1,45 +1,29 @@
 // CameraController.jsx
-import {useContext, useEffect, useState} from 'react';
-import {ArcRotateCamera, FollowCamera, Vector3} from '@babylonjs/core';
+import {useContext, useEffect} from 'react';
+import {FollowCamera, Vector3} from '@babylonjs/core';
 import { GameObjectContext } from '../contexts/GameObjectContext';
-import playerController from "./PlayerController.jsx";
 
-const CameraController = () => {
+export const CameraController = ({ playerMesh }) => {
   const { scene } = useContext(GameObjectContext);
-  //Check if player exist to create camera
-
-  const [playerReady, setPlayerReady] = useState(false)
 
   useEffect(() => {
-    let interval
+    if (scene && playerMesh) {
+      const existingCamera = scene.getCameraByName('camera');
+      if (existingCamera) existingCamera.dispose();
 
-    if (scene){
-      interval = setInterval(() => {
-        const player = scene.getMeshByName('player')
-        if (player){
-          setPlayerReady(true)
-          clearInterval(interval)
-        }
-      }, 100)
-    }
 
-  }, [scene])
-
-  useEffect(() => {
-    scene.getCameraByName('camera').dispose()
-    const camera = new FollowCamera(
+      const camera = new FollowCamera(
         'camera',
         new Vector3(0, 5, -15),
         scene
-    )
-    camera.radius = 30
-    camera.heightOffset = 25
-    camera.rotationOffset = 180
-    camera.lockedTarget = scene.getMeshByName('player')
-    console.log(camera.lockedTarget)
-  }, [scene, playerReady])
+      );
+      camera.radius = 30;
+      camera.heightOffset = 25;
+      camera.rotationOffset = 180;
+      camera.lockedTarget = playerMesh;
+      console.log("Camera target:", camera.lockedTarget);
+    }
+  }, [scene, playerMesh]);
 
   return null;
 };
-
-export default CameraController;

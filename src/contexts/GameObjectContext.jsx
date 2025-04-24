@@ -1,8 +1,6 @@
 // GameObjectContext.jsx
 import React from 'react';
-import PropTypes from 'prop-types';
 
-// Crea il contesto GameObjectContext
 const GameObjectContext = React.createContext({
   scene: null,
   engine: null,
@@ -10,7 +8,6 @@ const GameObjectContext = React.createContext({
   afterLoop: null,
 });
 
-// Crea il componente GameObject
 const GameObject = ({ children, scene, engine }) => {
   const beforeLoopRef = React.useRef(null);
   const afterLoopRef = React.useRef(null);
@@ -43,11 +40,4 @@ const GameObject = ({ children, scene, engine }) => {
     </GameObjectContext.Provider>
   );
 };
-
-GameObject.propTypes = {
-  children: PropTypes.node.isRequired,
-  scene: PropTypes.object.isRequired,
-  engine: PropTypes.object.isRequired,
-};
-
 export { GameObjectContext, GameObject };
